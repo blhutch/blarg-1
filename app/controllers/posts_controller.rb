@@ -10,6 +10,20 @@ class PostsController < ApplicationController
     render :show
   end
 
+  def edit
+    @post = Post.find(params['id'].to_i)
+  end
+
+  def update
+    tags = params['post']['tags'].split(", ")
+    tag_models = tags.map { |tag| Tag.find_or_create_by(name: tag) }
+    @post = Post.find(params['id'].to_i)
+    user_updates = params['post']
+    attrs = {title: user_updates['title'], content: user_updates['content'], updated_at: DateTime.now, tags: tag_models}
+    @post.update_attributes(attrs)
+    redirect_to posts_path
+  end
+
   def new
     render :new
   end
